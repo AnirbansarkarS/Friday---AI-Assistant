@@ -13,5 +13,5 @@ app.include_router(rag.router, prefix="/api")
 
 
 if __name__ == "__main__":
-import uvicorn
-uvicorn.run("backend.app:app", host=HOST, port=PORT, reload=True)
+    import uvicorn
+    uvicorn.run("backend.app:app", host=HOST, port=PORT, reload=True)
