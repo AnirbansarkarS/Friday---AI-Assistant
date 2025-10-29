@@ -1,24 +1,26 @@
+"""
+Loads AI models: Ollama (local) + Hugging Face fallback
+"""
 from huggingface_hub import InferenceClient
-from ..config import HF_API_KEY, INFERENCE_MODEL
+import subprocess
+import requests
 
-_client = None
+class ModelLoader:
+    def __init__(self, ollama_model="llama3", hf_model="gpt2", hf_api_key=None):
+        self.ollama_model = ollama_model
+        self.hf_client = InferenceClient(hf_model, token=hf_api_key) if hf_api_key else None
 
+    def generate_ollama(self, prompt):
+        try:
+            response = requests.post(
+                "http://localhost:11434/api/generate",
+                json={"model": self.ollama_model, "prompt": prompt}, timeout=30
+            )
+            return response.json().get("response", "")
+        except:
+            return None
 
-def get_inference_client():
-    global _client
-    if _client is None:
-        if not HF_API_KEY:
-            raise RuntimeError("HF_API_KEY is not set in env")
-        _client = InferenceClient(api_key=HF_API_KEY)
-    return _client
-
-
-def generate_text(prompt: str, max_length: int = 256, model: str = None):
-    client = get_inference_client()
-    model_to_use = model or INFERENCE_MODEL
-    # Use the InferenceClient text generation when available
-    res = client.text_generation(model=model_to_use, inputs=prompt, parameters={"max_new_tokens": max_length})
-    # InferenceClient returns a list-like generator; we'll return text merged
-    if isinstance(res, (list, tuple)):
-        return "".join([r.get('generated_text', '') if isinstance(r, dict) else str(r) for r in res])
-    return str(res)
+    def generate_hf(self, prompt):
+        if not self.hf_client:
+            return "HF API Key missing"
+        return self.hf_client.text_generation(prompt)
