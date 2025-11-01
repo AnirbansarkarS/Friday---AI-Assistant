@@ -1,27 +1,31 @@
+# frontend/helpers/api_client.py
+"""
+Handles API communication with FastAPI backend
+"""
 import requests
-import os
 
+class APIClient:
+    def __init__(self, base_url="http://localhost:8000"):
+        self.base_url = base_url
 
-BASE = os.getenv("BACKEND_URL", "http://localhost:8000/api")
+    def chat(self, message):
+        response = requests.post(f"{self.base_url}/chat", json={"message": message})
+        if response.status_code == 200:
+            return response.json().get("response")
+        else:
+            return f"Error: {response.text}"
 
+    def upload_doc(self, file):
+        files = {"file": (file.name, file.getvalue(), "application/pdf")}
+        response = requests.post(f"{self.base_url}/upload", files=files)
+        if response.status_code == 200:
+            return response.json().get("message")
+        else:
+            return f"Error: {response.text}"
 
-
-
-def chat(prompt: str):
-    r = requests.post(f"{BASE}/chat", json={"prompt": prompt})
-    return r.json()
-
-
-
-
-def upload_pdf_file(path: str):
-    with open(path, "rb") as f:
-    r = requests.post(f"{BASE}/upload-pdf", files={"file": f})
-    return r.json()
-
-
-
-
-def ask_doc(question: str):
-    r = requests.post(f"{BASE}/ask-doc", json={"question": question})
-    return r.json()
+    def ask_doc(self, question):
+        response = requests.post(f"{self.base_url}/ask-doc", json={"question": question})
+        if response.status_code == 200:
+            return response.json().get("answer")
+        else:
+            return f"Error: {response.text}"
