@@ -5,7 +5,7 @@ from core.task_executor import execute_task
 from core.tts_engine import speak
 
 def main():
-    speak("Friday online. Listening for your command...")
+    speak("Friday online. How can I help you Boss ?...")
 
     while True:
         command = listen_command()
