@@ -4,7 +4,7 @@ python-multipart
 requests
 huggingface-hub
 sentence-transformers
-chroma-db==1.0.15
+# chroma-db==1.0.15
 PyPDF2
 pydantic
 python-dotenv
