@@ -9,5 +9,7 @@ PyPDF2
 pydantic
 python-dotenv
 aiohttp
-python-multipart
 tqdm
+AppOpener
+SpeechRecognition
+pyaudio
