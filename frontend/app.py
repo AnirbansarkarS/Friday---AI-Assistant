@@ -33,7 +33,10 @@ with st.sidebar:
                 st.session_state.messages.append({"role": "user", "content": command})
                 # Get response
                 with st.chat_message("assistant"):
-                    response = st.write_stream(client.chat_stream(command))
+                    response = st.write_stream(client.chat_stream(
+                        command, 
+                        history=st.session_state.messages[:-1] # Send history excluding the current message
+                    ))
                 st.session_state.messages.append({"role": "assistant", "content": response})
                 st.rerun()
             else:
@@ -60,7 +63,10 @@ if prompt := st.chat_input("What is your command?"):
 
     # Get response from backend
     with st.chat_message("assistant"):
-        response = st.write_stream(client.chat_stream(prompt))
+        response = st.write_stream(client.chat_stream(
+            prompt, 
+            history=st.session_state.messages[:-1] # Send history excluding the current message
+        ))
     
     # Add assistant message to state
     st.session_state.messages.append({"role": "assistant", "content": response})
