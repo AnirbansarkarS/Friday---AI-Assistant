@@ -52,8 +52,42 @@ The presentation layer is built to manage complex interactions simply, utilizing
     *   `setup_ollama.sh`: Automated configuration for Ollama instances.
     *   `download_models.py`: Helper script to cache embeddings, STT, and TTS models for offline availability.
 
+## Implementation Roadmap
+
+### Phase 1: Core loop — text chat works
+*Goal: Get Ollama talking to the Streamlit UI end-to-end. No voice, no RAG yet.*
+
+*   [ ] **Start Ollama + Pull Model:**
+    *   Run `ollama serve`, pull `llama3` or `mistral`.
+    *   Confirm it responds via curl in the terminal.
+*   [ ] **Wire `inference.py` (Local LLM Integration):**
+    *   File: `/backend/core/inference.py`
+    *   Call Ollama `/api/generate`. Return streamed tokens. 
+    *   Add system prompt for the emotional companion persona.
+*   [ ] **Build `/chat` Route:**
+    *   File: `/backend/routes/chat.py`
+    *   FastAPI `POST /chat`. Accepts message + history. Returns streamed LLM response.
+*   [ ] **Streamlit Chat UI:**
+    *   File: `/frontend/pages/chatbot.py`
+    *   Use `st.chat_input` and `st.chat_message`. 
+    *   Call `api_client` -> `/chat`. Stream tokens into the UI.
+
 ## Next Steps / Backlog
 *   [ ] **End-to-End Testing**: Confirm the complete pipeline (Voice -> Intent -> Search -> Local LLM -> TTS).
 *   [ ] **Expand Intents**: Add more plugins (`/backend/intents/`) like Email fetching, Calendar integration, or IoT smart home controls.
 *   [ ] **Optimization**: Test latency times for local Ollama instances and experiment with lighter quantized text and embedding models.
 *   [ ] **Deployment**: Create a `docker-compose.yml` for unified initialization of both the backend and frontend components.
+
+## 🧬 Planned Feature: Emotional State System
+**Core Idea**: Give Friday an internal state to create the illusion of life. The same user input will generate different responses based on Friday's current "mood."
+
+**Proposed State Structure:**
+```json
+{
+  "mood": "calm",
+  "energy": 0.7,
+  "bond_with_user": 0.4,
+  "last_interaction_sentiment": "positive"
+}
+```
+*Note: This structure will be expanded as needed to include more dynamic traits and personality dimensions.*
