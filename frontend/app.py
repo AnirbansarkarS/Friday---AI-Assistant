@@ -32,7 +32,8 @@ with st.sidebar:
                 # Add user message to state
                 st.session_state.messages.append({"role": "user", "content": command})
                 # Get response
-                response = client.chat(command)
+                with st.chat_message("assistant"):
+                    response = st.write_stream(client.chat_stream(command))
                 st.session_state.messages.append({"role": "assistant", "content": response})
                 st.rerun()
             else:
@@ -59,9 +60,7 @@ if prompt := st.chat_input("What is your command?"):
 
     # Get response from backend
     with st.chat_message("assistant"):
-        with st.spinner("Thinking..."):
-            response = client.chat(prompt)
-            st.markdown(response)
+        response = st.write_stream(client.chat_stream(prompt))
     
     # Add assistant message to state
     st.session_state.messages.append({"role": "assistant", "content": response})
