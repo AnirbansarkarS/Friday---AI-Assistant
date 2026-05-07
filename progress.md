@@ -3,6 +3,21 @@
 ## Overview
 Friday is a personal, locally-hosted AI assistant. It integrates Retrieval-Augmented Generation (RAG), Natural Language Processing (local LLM inference via Ollama), Voice capabilities (Speech-to-Text and Text-to-Speech), and system-level task execution.
 
+## Current Progress & Working Status
+
+**Overall Progress Estimation: ~65% - 75% Complete**
+
+### What is Currently Working 💪
+*   **Base Project Architecture:** The modular structure (decoupling frontend UI, backend APIs, core AI logic, and data storage) is fully established and mapped out.
+*   **Frontend UI Definition:** The Streamlit application structure (`app.py`, `chatbot.py`, `Upload_Doc_RAG.py`) is laid out for user interaction.
+*   **Backend API Services:** API routes (`chat.py`, `rag.py`, `health.py`) and clients (`api_client.py`) are logically defined to bridge the user interface with the local AI models.
+*   **Core AI Pipelines (Code Structure):** The logic files for Local Inference (`inference.py`), STT/TTS (`speech_listener.py`, `tts_engine.py`), and intent actions (`open_app.py`, `search_web.py`) are created and organized.
+
+### What Needs Testing/Validation 🚧
+*   **End-to-End Execution:** Running a full conversation cycle from the Streamlit UI -> Backend API -> Ollama Model -> UI response.
+*   **Voice & Hardware Integration:** Validating that `speech_listener.py` successfully captures valid microphone input and `tts_engine.py` outputs clear audio.
+*   **Database Connections:** Confirming ChromaDB successfully persists and retrieves embeddings for the RAG pipeline.
+
 ## Current Architecture & Completed Components
 
 ### 1. Backend (`/backend`)
