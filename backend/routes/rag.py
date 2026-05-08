@@ -1,61 +1,71 @@
-# Initialize model loader and pipeline once
-loader = ModelLoader()
-pipe = InferencePipeline(loader)
-
-@router.post("/chat")
-def chat(request: dict):
-    try:
-        user_input = request.get("message", "")
-        if not user_input:
-            raise HTTPException(status_code=400, detail="Message required")
-        response = pipe.generate(user_input)
-        return {"response": response}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
 # backend/routes/rag.py
 """
-Handles /ask-doc endpoint — RAG system for document-based QA
+RAG API routes:
+  POST /rag/upload       — ingest a PDF or TXT file
+  GET  /rag/docs         — list indexed documents
+  DELETE /rag/docs/{name} — remove a document from the store
 """
+
+import os
+import shutil
+
 from fastapi import APIRouter, UploadFile, File, HTTPException
-from backend.utils.pdf_loader import load_pdf
-from backend.utils.text_splitter import split_text
-from backend.utils.chroma_db import ChromaDB
-from backend.core.embeddings import Embeddings
-from backend.core.rag import RAG
-from backend.core.inference import InferencePipeline
-from backend.core.model import ModelLoader
 
-router = APIRouter()
+from backend.utils.ingest import ingest_file
+from backend.utils.chroma_db import list_docs, delete_doc
 
-vector_store = ChromaDB()
-embedder = Embeddings()
-loader = ModelLoader()
-pipe = InferencePipeline(loader)
-rag = RAG(pipe, vector_store)
+router = APIRouter(prefix="/rag")
+
+DOCS_DIR = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..", "data", "docs")
+)
+os.makedirs(DOCS_DIR, exist_ok=True)
+
 
 @router.post("/upload")
-def upload_doc(file: UploadFile = File(...)):
+async def upload_doc(file: UploadFile = File(...)):
+    """
+    Accept a PDF or TXT upload, save it to data/docs/, and ingest it into ChromaDB.
+    Returns: {"doc_name": str, "chunks": int}
+    """
+    allowed_exts = {".pdf", ".txt", ".md"}
+    ext = os.path.splitext(file.filename)[1].lower()
+    if ext not in allowed_exts:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported file type '{ext}'. Allowed: PDF, TXT, MD",
+        )
+
+    save_path = os.path.join(DOCS_DIR, file.filename)
     try:
-        text = load_pdf(file.file)
-        chunks = split_text(text)
-        embeddings = embedder.encode(chunks)
-        vector_store.add_documents(chunks, embeddings)
-        return {"message": "Document uploaded and indexed successfully"}
+        with open(save_path, "wb") as out:
+            shutil.copyfileobj(file.file, out)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Could not save file: {e}")
+
+    try:
+        result = ingest_file(save_path)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Ingestion failed: {e}")
+
+    return result
+
+
+@router.get("/docs")
+async def get_docs():
+    """Return list of document names currently indexed in ChromaDB."""
+    try:
+        docs = list_docs()
+        return {"docs": docs}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/ask-doc")
-def ask_doc(request: dict):
+
+@router.delete("/docs/{doc_name:path}")
+async def remove_doc(doc_name: str):
+    """Delete all ChromaDB chunks for the given document name."""
     try:
-        query = request.get("question", "")
-        if not query:
-            raise HTTPException(status_code=400, detail="Question required")
-        answer = rag.query(query)
-        return {"answer": answer}
+        deleted = delete_doc(doc_name)
+        return {"doc_name": doc_name, "chunks_deleted": deleted}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-
-

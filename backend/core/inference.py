@@ -2,13 +2,14 @@
 Inference pipeline: choose model source + generation logic
 """
 import json
+import os
 import requests
 from typing import Generator
 from .model import ModelLoader
 from backend.utils.memory_store import MemoryStore
 from backend.core.nlp_engine import detect_mood
 
-OLLAMA_URL = "http://localhost:11434/api/generate"
+OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://host.docker.internal:11434/api/generate")
 DEFAULT_MODEL = "llama3"
 
 class InferencePipeline:
@@ -45,7 +46,7 @@ class InferencePipeline:
         )
         return base_prompt
 
-    def generate_stream(self, prompt: str, history: list = None) -> Generator[str, None, None]:
+    def generate_stream(self, prompt: str, history: list = None, rag_context: str = "") -> Generator[str, None, None]:
         # Detect mood and save to memory
         current_mood = detect_mood(prompt)
         self.memory.add_mood(current_mood)
@@ -58,6 +59,15 @@ class InferencePipeline:
             self.memory.add_fact(prompt)
 
         system_prompt = self._build_system_prompt(current_mood)
+        
+        # Inject RAG context if available
+        if rag_context and rag_context.strip():
+            system_prompt += (
+                "\n\nRelevant context retrieved from the user's personal documents:\n"
+                f"{rag_context}\n"
+                "Use this context to inform your response when relevant, "
+                "but do not mention that you retrieved it from documents unless asked."
+            )
         
         # Formulate full prompt with history
         full_prompt = f"{system_prompt}\n\n"

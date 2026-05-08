@@ -1,7 +1,12 @@
 {
     "user_name": "Anirban",
-    "facts": [""],
+    "facts": [
+        ""
+    ],
     "past_moods": [
+        "neutral",
+        "neutral",
+        "neutral",
         "neutral",
         "neutral",
         "neutral"
