@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.tmp
+*.swp
+.env
+.venv/
+.vscode/
+.idea/
+node_modules/
+models/
+data/vectorstore/

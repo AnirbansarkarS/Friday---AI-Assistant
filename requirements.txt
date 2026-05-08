@@ -2,14 +2,23 @@ fastapi
 uvicorn[standard]
 python-multipart
 requests
+streamlit
 huggingface-hub
 sentence-transformers
-# chroma-db==1.0.15
 PyPDF2
 pydantic
 python-dotenv
 aiohttp
 tqdm
-AppOpener
+# AppOpener only works on Windows
+AppOpener; sys_platform == 'win32'
 SpeechRecognition
 pyaudio
+# Phase 3: Voice
+pyttsx3
+openai-whisper
+# Phase 4: RAG
+chromadb>=0.4
+numpy
+# Phase 5: Intents
+duckduckgo-search

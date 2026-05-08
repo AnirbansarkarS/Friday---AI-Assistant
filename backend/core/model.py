@@ -1,9 +1,12 @@
 """
 Loads AI models: Ollama (local) + Hugging Face fallback
 """
+import os
 from huggingface_hub import InferenceClient
 import subprocess
 import requests
+
+OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://host.docker.internal:11434/api/generate")
 
 class ModelLoader:
     def __init__(self, ollama_model="llama3", hf_model="gpt2", hf_api_key=None):
@@ -13,7 +16,7 @@ class ModelLoader:
     def generate_ollama(self, prompt):
         try:
             response = requests.post(
-                "http://localhost:11434/api/generate",
+                OLLAMA_URL,
                 json={"model": self.ollama_model, "prompt": prompt}, timeout=30
             )
             return response.json().get("response", "")
