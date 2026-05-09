@@ -48,6 +48,13 @@ class APIClient:
         except Exception as e:
             yield f"\n[Network Error communicating with backend: {str(e)}]"
 
+    def speak(self, text):
+        try:
+            payload = {"text": text}
+            requests.post(f"{self.base_url}/speak", json=payload)
+        except Exception as e:
+            print(f"TTS Error: {e}")
+
     def upload_doc(self, file):
         files = {"file": (file.name, file.getvalue(), "application/pdf")}
         response = requests.post(f"{self.base_url}/upload", files=files)
