@@ -38,6 +38,7 @@ with st.sidebar:
                         history=st.session_state.messages[:-1] # Send history excluding the current message
                     ))
                 st.session_state.messages.append({"role": "assistant", "content": response})
+                client.speak(response)  # Tell the backend to speak the generated response aloud!
                 st.rerun()
             else:
                 st.error("Could not understand audio.")

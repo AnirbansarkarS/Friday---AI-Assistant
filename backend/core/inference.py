@@ -9,7 +9,7 @@ from .model import ModelLoader
 from backend.utils.memory_store import MemoryStore
 from backend.core.nlp_engine import detect_mood
 
-OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://host.docker.internal:11434/api/generate")
+OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://127.0.0.1:11434/api/generate")
 DEFAULT_MODEL = "llama3"
 
 class InferencePipeline:
