@@ -73,6 +73,7 @@ The presentation layer is built to manage complex interactions simply, utilizing
     *   Call `api_client` -> `/chat`. Stream tokens into the UI.
 
 ## Next Steps / Backlog
+*   [ ] **CLI Mode (NEW!)**: Interactive command-line interface for direct terminal interaction.
 *   [ ] **End-to-End Testing**: Confirm the complete pipeline (Voice -> Intent -> Search -> Local LLM -> TTS).
 *   [ ] **Expand Intents**: Add more plugins (`/backend/intents/`) like Email fetching, Calendar integration, or IoT smart home controls.
 *   [ ] **Optimization**: Test latency times for local Ollama instances and experiment with lighter quantized text and embedding models.

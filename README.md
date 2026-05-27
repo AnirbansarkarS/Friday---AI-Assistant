@@ -39,15 +39,80 @@ Friday---AI-Assistant/
 
 *Note: The project is actively under development.*
 
+### Quick Setup
+
 1. **Set up Ollama:** Run `./scripts/setup_ollama.sh` to initialize your local AI instance.
 2. **Download Models:** Run `python scripts/download_models.py` to cache embeddings and voice models.
 3. **Install Dependencies:** `pip install -r requirements.txt`
-4. **Boot up:** Use the provided `./start.sh` script to launch both the backend API and frontend app simultaneously.
+
+### Running Friday
+
+#### 🖥️ CLI Mode (Recommended for Direct Interaction)
+
+**Interactive Mode** - Talk to Friday in your terminal:
+```bash
+python cli.py
+```
+
+**Single Command** - Ask Friday something and get a response:
+```bash
+python cli.py "search python tutorials"
+```
+
+**Voice Mode** - Speak commands (requires microphone):
+```bash
+python cli.py --voice
+```
+
+Or use the Windows launcher:
+```powershell
+.\friday.ps1                          # Interactive
+.\friday.ps1 "search python"         # Single command
+.\friday.ps1 -Voice                  # Voice mode
+```
+
+#### 🌐 Web UI Mode (Full Stack)
+
+Launch both backend API and Streamlit frontend:
+```bash
+./start.sh                            # Linux/Mac
+.\start.ps1                           # Windows
+```
+
+## � Example Commands
+
+Here's what you can ask Friday:
+
+**Search & Information:**
+- "Search for Python machine learning"
+- "What is artificial intelligence?"
+- "Google the latest news"
+
+**Application Control:**
+- "Open notepad"
+- "Launch Chrome"
+- "Start visual studio code"
+
+**System Control:**
+- "Shutdown my computer"
+- "Restart the system"
+- "Volume up"
+
+**General Chat:**
+- "Tell me a joke"
+- "How are you today?"
+- "What's your favorite programming language?"
+
+**Plan for Future:**
+- "Check my email"
+- "Create a calendar event"
+- "Set up a reminder"
 
 ## 🛣️ Roadmap & Progress
 
 Currently, the project is moving through its foundational phases:
 - [x] Base project architecture, decoupled endpoints, and UI schemas.
+- [x] **CLI Mode:** Interactive command-line interface for direct assistant interaction.
 - [ ] **Phase 1:** Core loop execution — text chat integrating Streamlit UI to Ollama backbone.
 - [ ] **Phase 2:** Advanced Intent execution & Voice integrations (End-to-end processing).
 - [ ] **Phase 3:** RAG enhancements via UI and emotional state system integration.
